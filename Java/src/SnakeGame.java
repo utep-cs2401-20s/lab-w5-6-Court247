@@ -9,23 +9,27 @@ public class SnakeGame {
     }
 
     public SnakeGame(boolean[][] snakeGame, int x, int y){
-       for(x = 0; x< game.length; x++){
-           for(y = 0; y<game[0].length;y++){
-               game[x][y] = snakeGame[x][y];
+       for(x = 0; x < snakeGame.length; x++){
+           for(y = 0; y<snakeGame[0].length;y++){
+              snakeGame[x][y] = game[x][y];
            }
        }
        headposition = new int[]{x, y};
 
     }
 
-    public int neighbors(){
+    public int neighbors(boolean[][] arr){
         int count = 0;
-        int[][] arr;
+
         for(int i = 0; i< arr.length;i++){
             for (int j = 0; i <arr[0].length;j++){
-                if(arr[i-1][j] = true){
+                if(arr[i-1][j+1] = true){
                     count++;
-                }if (arr[i+1][j-1] = true){
+                }if(arr[i+1][j-1] = true){
+                    count++;
+                }if(arr[i-1][j] = true){
+                    count++;
+                }if(arr[i+1][j] = true){
                     count++;
                 }
             }
@@ -33,47 +37,45 @@ public class SnakeGame {
         return count;
     }
 
-    public int[] finalTailExhaustive(){//finds the tail of the snake by searching the whole grid, keeps track of how many cells searched. Stop when it finds the tail.
+    public int[] findTailExhaustive(){//finds the tail of the snake by searching the whole grid, keeps track of how many cells searched. Stop when it finds the tail.
         resetCounters();
         int snakeLength = 0;
         int[] findTail = {0,0,0};
-        //checking neighbors means i = current position. i+1 = , i-1 = ,
+        //checking neighbors
 
         for(int i =0; i<game.length;i++){
             for(int j = 0; j< game[i].length;j++){
-                if(i==headposition[0] && j==headposition[1]) {
-                    if (game[i][j] = true) { //if part of snake
+                if(game[i][j]) {
+                    if (i==headposition[0] && j==headposition[1]) { //if part of snake
                         snakeLength++;
-                        count++;
                     }
-                    if(game[i][j]){
-                        if()
-                    }
-                }//if not foundTail
-                       // if tail + not head +1neighbor
-                            //return i,j,length
-                            //foundTail = true
-                    //else foundTail
-                        //exhaust check --
+                }
+                if((neighbors(game) == 1)&&(i!=headposition[0] && j!=headposition[1])){
+                    findTail[0] = i;
+                    findTail[1] = j;
+                    findTail[2] = snakeLength;
+                    break;
+                }else{
+                    exhaustiveCheck--;
+                }
             }
         }
+        return findTail;
     }
 
-
-    public int[] finalTailRecursive(){ //Starts the search to look for the tail using the head position.
+    public int[] findTailRecursive(){ //Starts the search to look for the tail using the head position.
         resetCounters();
-        return finalTailRecursive(headposition,headposition);
+        return findTailRecursive(headposition,headposition);
     }
 
-    public int[] finalTailRecursive(int[] currentPosition, int[] previousPosition){//for actual checking.
+    public int[] findTailRecursive(int[] currentPosition, int[] previousPosition){//for actual checking.
         resetCounters();
-        if((neighbors() == 1) && (currentPosition != headposition) && (previousPosition!= currentPosition)){
-            return finalTailRecursive(headposition, headposition);
-        }else if (neighbors() ==1){
-           return finalTailRecursive(previousPosition)
+        if((neighbors(game) == 1) && (currentPosition != headposition) && (previousPosition!= currentPosition)){
+            return findTailRecursive(headposition, headposition);
+        }else if (neighbors(game) ==1){
+           return findTailRecursive(new int[]{0, 0},currentPosition);
         }
-
-
+        return findTailRecursive(currentPosition,previousPosition);
     }
 
     private void resetCounters(){
